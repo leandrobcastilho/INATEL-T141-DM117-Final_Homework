@@ -134,8 +134,6 @@ public class LevelControllerComp : MonoBehaviour {
         }
     }
 
-
-
     [Header("Current game info:")]
 
     public static bool shieldActivated = false;
@@ -555,6 +553,8 @@ public class LevelControllerComp : MonoBehaviour {
         {
             numAsteroidsDestroyedPerBonus = 0;
             numBonus++;
+            if (numBonus > spaceShipComp.laserShots.Length)
+                numBonus = spaceShipComp.laserShots.Length;
         }
     }
 

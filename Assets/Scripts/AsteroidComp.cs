@@ -46,18 +46,18 @@ public class AsteroidComp : MonoBehaviour {
    
             if (transform.CompareTag("Type3") || transform.CompareTag("Type2") || transform.CompareTag("Type1"))
             {
+                int power = 1;
+                if (collision.gameObject.transform.CompareTag("LaserShot1"))
+                    power = 1;
+                if (collision.gameObject.transform.CompareTag("LaserShot2"))
+                    power = 2;
+                if (collision.gameObject.transform.CompareTag("LaserShot3"))
+                    power = 3;
                 AudioSource.PlayClipAtPoint(audioSource.clip, transform.position);
                 ExplosionEffect();
-                ApplyDamages();
+                ApplyDamages(power);
             }
 
-        }
-        else if(collision.gameObject.GetComponent<LaserShotComp>())
-        {
-            numShot = sprites.Length + 1;
-            AudioSource.PlayClipAtPoint(audioSource.clip, transform.position);
-            ExplosionEffect();
-            ApplyDamages();
         }
     }
 
@@ -82,10 +82,11 @@ public class AsteroidComp : MonoBehaviour {
         }
     }
 
-    private void ApplyDamages()
+    private void ApplyDamages(int power)
     {
         LevelControllerComp.PrintDebug("AsteroidComp.ApplyDamages ");
-        numShot++;
+        for( int i = 0; i <= power; i++)
+            numShot++;
         int maxShot = sprites.Length + 1;
         if (numShot >= maxShot)
         {

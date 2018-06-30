@@ -13,7 +13,7 @@ public class SpaceShipComp : MonoBehaviour {
 
     [SerializeField]
     [Tooltip("Environment Laser Shot")]
-    private GameObject[] laserShots;
+    public GameObject[] laserShots;
 
     [SerializeField]
     [Tooltip("Inteval time between Laser Shot")]
