@@ -3,7 +3,21 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - Type3
+  - LaserShot1
+  - Type1
+  - Type2
+  - LaserShot2
+  - LaserShot3
+  - SpaceShip
+  - Shield
+  - InfoAsteroidsValue
+  - InfoShiedlValue
+  - InfoBonusValue
+  - Spot
+  - InfoShieldValue
+  - GoText
   layers:
   - Default
   - TransparentFX
@@ -13,7 +27,7 @@ TagManager:
   - UI
   - 
   - 
-  - PostProcessing
+  - 
   - 
   - 
   - 
@@ -40,4 +54,13 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: Background
+    uniqueID: 4029611157
+    locked: 0
+  - name: Game
+    uniqueID: 846178957
+    locked: 0
+  - name: Menu
+    uniqueID: 121507487
     locked: 0
