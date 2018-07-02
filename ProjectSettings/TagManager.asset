@@ -18,6 +18,8 @@ TagManager:
   - Spot
   - InfoShieldValue
   - GoText
+  - InfoLevelValue
+  - InfoMaxAsteroidsValue
   layers:
   - Default
   - TransparentFX

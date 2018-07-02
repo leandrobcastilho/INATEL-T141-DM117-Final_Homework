@@ -3,7 +3,7 @@ guid: 6dbeb3f3754e5a345b5052a428e1b64a
 TextureImporter:
   fileIDToRecycleName:
     21300000: spaceship
-    21300002: spaceship_shield
+    21300002: spaceship_shield_2
     21300004: spaceship_shield_1
   externalObjects: {}
   serializedVersion: 5
@@ -116,7 +116,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: spaceship_shield
+      name: spaceship_shield_2
       rect:
         serializedVersion: 2
         x: 0
@@ -124,7 +124,7 @@ TextureImporter:
         width: 256
         height: 266
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -144,7 +144,7 @@ TextureImporter:
         width: 256
         height: 262
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []

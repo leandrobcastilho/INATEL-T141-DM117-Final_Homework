@@ -5,7 +5,6 @@ using UnityEngine.SceneManagement;
 
 public class MainControllerComp : MonoBehaviour {
 
-
     public void LoadSceneByNameWithAds(string nameScene)
     {
 

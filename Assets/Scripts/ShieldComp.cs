@@ -22,7 +22,7 @@ public class ShieldComp : MonoBehaviour {
     void Start()
     {
         levelControllerComp = FindObjectOfType<LevelControllerComp>();
-        LevelControllerComp.PrintDebug("ShieldComp.Start ");
+        ConfigComp.PrintDebug("ShieldComp.Start ");
         numShot = 0;
         spriteRenderer = GetComponent<SpriteRenderer>();
         audioSource = GetComponent<AudioSource>();
@@ -38,29 +38,23 @@ public class ShieldComp : MonoBehaviour {
     {
         if (collision.gameObject.GetComponent<LaserShotComp>())
         {
-            //LevelControllerComp.PrintDebug("ShieldComp.OnCollisionEnter2D - LaserShot = " + gameObject.name + " - " + collision.gameObject.name);
-            AudioSource.PlayClipAtPoint(audioSource.clip, transform.position);
+            if (levelControllerComp.Config.Soundeffects)
+                AudioSource.PlayClipAtPoint(audioSource.clip, transform.position);
             ExplosionEffect();
             ApplyDamages();
         }
         else if (collision.gameObject.GetComponent<SpaceShipComp>())
         {
-            //LevelControllerComp.PrintDebug("ShieldComp.OnCollisionEnter2D - SpaceShip = " + gameObject.name + " - " + collision.gameObject.name);
-            levelControllerComp.ActivateShield();
-            levelControllerComp.numShield = (sprites.Length - numShot);
-            Destroy(gameObject);
+             Destroy(gameObject);
         }
-        else
-        {
-            //LevelControllerComp.PrintDebug("ShieldComp.OnCollisionEnter2D ## "+ gameObject.name + " - " + collision.gameObject.name);
-        }
+
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.gameObject.GetComponent<GameOverComp>())
         {
-            //LevelControllerComp.PrintDebug("ShieldComp.OnTriggerEnter2D SpaceShip " + gameObject.name + " - " + collision.gameObject.name);
+            //ConfigComp.PrintDebug("ShieldComp.OnTriggerEnter2D SpaceShip " + gameObject.name + " - " + collision.gameObject.name);
             Destroy(gameObject);
         }
     }
@@ -72,6 +66,7 @@ public class ShieldComp : MonoBehaviour {
             ParticleSystem ps = Instantiate<ParticleSystem>(explosion, transform.position, Quaternion.identity);
             ParticleSystem.MainModule main = ps.main;
             main.startColor = spriteRenderer.color;
+            Destroy(ps, 1.0f);
         }
     }
 

@@ -34,7 +34,7 @@ public class UnityAdControler : MonoBehaviour
         }
         //Pausar o jogo enquanto
         //o ad esta sendo mostrad
-        LevelControllerComp.PauseGame(true);
+        ConfigComp.PauseGame(true);
 #endif
     }
     /// <summary>
@@ -49,7 +49,7 @@ public class UnityAdControler : MonoBehaviour
         if (Advertisement.IsReady())
         {
             // Pausar o jogo
-            LevelControllerComp.PauseGame(true);
+            ConfigComp.PauseGame(true);
             //Outra forma de criar a 
             //instancia do ShowOptions e setar o callback
             var opcoes = new ShowOptions
@@ -66,7 +66,7 @@ public class UnityAdControler : MonoBehaviour
     {
         //Quando o anuncio acabar 
         //sai do modo paused
-        LevelControllerComp.PauseGame(false);
+        ConfigComp.PauseGame(false);
     }
 
 #if UNITY_ADS
@@ -88,7 +88,7 @@ public class UnityAdControler : MonoBehaviour
         }
 
         // Saia do modo paused
-        LevelControllerComp.PauseGame(false);
+        ConfigComp.PauseGame(false);
     }
 #endif
 

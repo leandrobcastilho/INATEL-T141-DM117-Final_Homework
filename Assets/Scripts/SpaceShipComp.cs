@@ -28,7 +28,7 @@ public class SpaceShipComp : MonoBehaviour {
 
     private Rigidbody2D rb;
 
-    private int numHits;
+    private int numMaxHits;
 
     private long timeReference;
 
@@ -36,9 +36,9 @@ public class SpaceShipComp : MonoBehaviour {
     void Start()
     {
         levelControllerComp = FindObjectOfType<LevelControllerComp>();
-        LevelControllerComp.PrintDebug("SpaceShipComp.Start ");
+        ConfigComp.PrintDebug("SpaceShipComp.Start ");
 
-        numHits = 0;
+        numMaxHits = 0;
         timeReference = DateTime.Now.ToFileTime();
 
         spriteRenderer = GetComponent<SpriteRenderer>();
@@ -57,7 +57,7 @@ public class SpaceShipComp : MonoBehaviour {
 
     public void SendLaserShot()
     {
-        if (levelControllerComp.GameStarted && !levelControllerComp.GamePaused)
+        if (levelControllerComp.GameStarted && !levelControllerComp.Config.GamePaused)
         {
             DateTime dataTime = DateTime.Now;
             long currentTimeNow = dataTime.ToFileTime();
@@ -66,7 +66,7 @@ public class SpaceShipComp : MonoBehaviour {
             if (timeDifference >= interval)
             {
                 timeReference = currentTimeNow;
-                GameObject laserShot = laserShots[levelControllerComp.numBonus];
+                GameObject laserShot = laserShots[levelControllerComp.Config.numTypeBonus];
                 SendLaserShot(laserShot);
             }
         }
@@ -83,7 +83,7 @@ public class SpaceShipComp : MonoBehaviour {
 
     private void MouseMovement()
     {
-        //LevelControllerComp.PrintDebug("SpaceShipComp.MouseMovement ");
+        //ConfigComp.PrintDebug("SpaceShipComp.MouseMovement ");
         float mousePosWorldUnitX = ((Input.mousePosition.x) / Screen.width * 16);
         Vector2 spaceShipPos = new Vector2(0, transform.position.y);
         spaceShipPos.x = Mathf.Clamp(mousePosWorldUnitX, 1f, 15f);
@@ -94,7 +94,7 @@ public class SpaceShipComp : MonoBehaviour {
     {
         if (Input.touchCount > 0)
         {
-            LevelControllerComp.PrintDebug("SpaceShipComp.TouchMovement ");
+            ConfigComp.PrintDebug("SpaceShipComp.TouchMovement ");
             Touch touch = Input.touches[0];
             float touchPosWorldUnitX = ((touch.position.x) / Screen.width * 16);
             Vector2 spaceShipPos = new Vector2(Mathf.Clamp(touchPosWorldUnitX, 0f, 15f), transform.position.y);
@@ -104,7 +104,7 @@ public class SpaceShipComp : MonoBehaviour {
 
     private void KeyboardMovement()
     {
-        LevelControllerComp.PrintDebug("SpaceShipComp.KeyboardMovement ");
+        ConfigComp.PrintDebug("SpaceShipComp.KeyboardMovement ");
         var horizontalStimulus = Input.GetAxis("Horizontal");
         float resultLateralSpeed = horizontalStimulus * levelControllerComp.lateralSpeed;
         rb.AddForce(new Vector2(resultLateralSpeed, 0));
@@ -114,60 +114,85 @@ public class SpaceShipComp : MonoBehaviour {
     {
         if (collision.gameObject.GetComponent<ShieldComp>())
         {
-            LevelControllerComp.PrintDebug("SpaceShipComp.OnCollisionEnter2D - Shield = " + gameObject.name + " - " + collision.gameObject.name);
-            numHits = levelControllerComp.numShield + 1;
-            LevelControllerComp.PrintDebug("SpaceShipComp.OnCollisionEnter2D - Shield : numHits " + numHits);
-            LoadSprite();
+            ConfigComp.PrintDebug("SpaceShipComp.OnCollisionEnter2D - Shield = " + gameObject.name + " - " + collision.gameObject.name);
+            ShieldComp shieldComp = collision.gameObject.GetComponent<ShieldComp>();
+
+            /*
+            * intact shield number 2
+            * broken shield number 1
+            */
+            int typeShield = 2 - shieldComp.numShot;
+            
+            /*
+            * if the shield is active you can upgrade if the new shield is better
+            */
+            if (levelControllerComp.Config.IsShieldActivated())
+            {
+                if (levelControllerComp.Config.numTypeShield < typeShield)
+                {
+                    levelControllerComp.Config.numTypeShield = typeShield;
+                    loadShieldSpaceShip();
+                }
+            }
+            else
+            {
+                levelControllerComp.Config.ActivateShield();
+                levelControllerComp.Config.numTypeShield = typeShield;
+                loadShieldSpaceShip();
+            }
+            
             return;
         }
         else if (collision.gameObject.GetComponent<AsteroidComp>())
         {
-            levelControllerComp.numBonus = 0;
-            LevelControllerComp.PrintDebug("SpaceShipComp.OnCollisionEnter2D - Asteroid = " + gameObject.name + " - " + collision.gameObject.name);
-            if (!levelControllerComp.IsShieldActivated())
-            {
-                numHits = sprites.Length + 1;
-            }
+            ConfigComp.PrintDebug("SpaceShipComp.OnCollisionEnter2D - Asteroid = " + gameObject.name + " - " + collision.gameObject.name);
+            numMaxHits--;
 
-            numHits++;
-            int maxHits = sprites.Length + 1;
-            if (numHits >= maxHits)
+            levelControllerComp.Config.numTypeBonus--;
+            if( levelControllerComp.Config.numTypeBonus < 0 )
+                levelControllerComp.Config.numTypeBonus = 0;
+
+            if (numMaxHits < 0)
             {
-                //Destroy(gameObject);
+                numMaxHits = 0;
+                levelControllerComp.Config.numTypeBonus = 0;
                 ExplosionEffect();
-                numHits = 0;
-                LoadSprite();
                 levelControllerComp.ResetGame();
             }
-            else
-            {
-                LoadSprite();
-            }
-            AudioSource.PlayClipAtPoint(audioSource.clip, transform.position);
+            LoadSprite();
+            if (levelControllerComp.Config.Soundeffects)
+                AudioSource.PlayClipAtPoint(audioSource.clip, transform.position);
             return;
         }
-        else
-        {
-            LevelControllerComp.PrintDebug("SpaceShipComp.OnCollisionEnter2D ## " + gameObject.name + " - " + collision.gameObject.name);
-        }
+        //else
+        //{
+        //    ConfigComp.PrintDebug("SpaceShipComp.OnCollisionEnter2D ## " + gameObject.name + " - " + collision.gameObject.name);
+        //}
         
+    }
+
+    private void loadShieldSpaceShip()
+    {
+        numMaxHits = levelControllerComp.Config.numTypeShield;
+        LoadSprite();
     }
 
     private void ExplosionEffect()
     {
-        LevelControllerComp.PrintDebug("SpaceShipComp.ExplosionEffect ");
+        ConfigComp.PrintDebug("SpaceShipComp.ExplosionEffect ");
         if (explosion)
         {
             ParticleSystem ps = Instantiate<ParticleSystem>(explosion, transform.position, Quaternion.identity);
             ParticleSystem.MainModule main = ps.main;
             main.startColor = spriteRenderer.color;
+            Destroy(ps, 1.0f);
         }
     }
 
     private void LoadSprite()
     {
-        LevelControllerComp.PrintDebug("SpaceShipComp.LoadSprite ");
-        int spriteIndex = numHits - 1;
+        ConfigComp.PrintDebug("SpaceShipComp.LoadSprite ");
+        int spriteIndex = numMaxHits;
         if (spriteIndex > sprites.Length || spriteIndex < 0)
             spriteIndex = 0;
         if (sprites[spriteIndex])

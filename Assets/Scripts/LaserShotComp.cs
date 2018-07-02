@@ -21,15 +21,21 @@ public class LaserShotComp : MonoBehaviour {
         }
     }
 
+    private LevelControllerComp levelControllerComp;
+
     // Use this for initialization
     void Start()
     {
+        levelControllerComp = FindObjectOfType<LevelControllerComp>();
         audioSource = GetComponent<AudioSource>();
-        audioSource.Play();
 
         spaceShip = FindObjectOfType<SpaceShipComp>();
         transform.position = spaceShip.transform.position;
 
+        if (levelControllerComp.Config.Soundeffects)
+        {
+            AudioSource.PlayClipAtPoint(audioSource.clip, transform.position);
+        }
         StarShot();
     }
 
@@ -47,7 +53,7 @@ public class LaserShotComp : MonoBehaviour {
     {
         if (!collision.gameObject.GetComponent<SpaceShipComp>())
         {
-            //LevelControllerComp.PrintDebug("LaserShotComp.OnCollisionEnter2D !SpaceShip " + gameObject.name + " - " + collision.gameObject.name);
+            //ConfigComp.PrintDebug("LaserShotComp.OnCollisionEnter2D !SpaceShip " + gameObject.name + " - " + collision.gameObject.name);
             Destroy(gameObject);
         }
     }
@@ -56,7 +62,7 @@ public class LaserShotComp : MonoBehaviour {
     {
         if (collision.gameObject.GetComponent<GameOverComp>())
         {
-            //LevelControllerComp.PrintDebug("LaserShotComp.OnTriggerEnter2D GameOver " + gameObject.name + " - " + collision.gameObject.name);
+            //ConfigComp.PrintDebug("LaserShotComp.OnTriggerEnter2D GameOver " + gameObject.name + " - " + collision.gameObject.name);
             Destroy(gameObject);
         }
     }
