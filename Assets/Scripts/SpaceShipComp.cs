@@ -36,7 +36,7 @@ public class SpaceShipComp : MonoBehaviour {
     void Start()
     {
         levelControllerComp = FindObjectOfType<LevelControllerComp>();
-        ConfigComp.PrintDebug("SpaceShipComp.Start ");
+        //ConfigComp.PrintDebug("SpaceShipComp.Start ");
 
         numMaxHits = 0;
         timeReference = DateTime.Now.ToFileTime();
@@ -49,7 +49,6 @@ public class SpaceShipComp : MonoBehaviour {
     // Update is called once per frame
     void Update()
     {
-        //SendLaserShot();
         MouseMovement();
         //TouchMovement();
         //KeyboardMovement();
@@ -57,7 +56,7 @@ public class SpaceShipComp : MonoBehaviour {
 
     public void SendLaserShot()
     {
-        if (levelControllerComp.GameStarted && !levelControllerComp.Config.GamePaused)
+        if (levelControllerComp.GameStarted && !levelControllerComp.GamePaused)
         {
             DateTime dataTime = DateTime.Now;
             long currentTimeNow = dataTime.ToFileTime();
@@ -94,7 +93,7 @@ public class SpaceShipComp : MonoBehaviour {
     {
         if (Input.touchCount > 0)
         {
-            ConfigComp.PrintDebug("SpaceShipComp.TouchMovement ");
+            //ConfigComp.PrintDebug("SpaceShipComp.TouchMovement ");
             Touch touch = Input.touches[0];
             float touchPosWorldUnitX = ((touch.position.x) / Screen.width * 16);
             Vector2 spaceShipPos = new Vector2(Mathf.Clamp(touchPosWorldUnitX, 0f, 15f), transform.position.y);
@@ -104,7 +103,7 @@ public class SpaceShipComp : MonoBehaviour {
 
     private void KeyboardMovement()
     {
-        ConfigComp.PrintDebug("SpaceShipComp.KeyboardMovement ");
+        //ConfigComp.PrintDebug("SpaceShipComp.KeyboardMovement ");
         var horizontalStimulus = Input.GetAxis("Horizontal");
         float resultLateralSpeed = horizontalStimulus * levelControllerComp.lateralSpeed;
         rb.AddForce(new Vector2(resultLateralSpeed, 0));
@@ -114,7 +113,7 @@ public class SpaceShipComp : MonoBehaviour {
     {
         if (collision.gameObject.GetComponent<ShieldComp>())
         {
-            ConfigComp.PrintDebug("SpaceShipComp.OnCollisionEnter2D - Shield = " + gameObject.name + " - " + collision.gameObject.name);
+            //ConfigComp.PrintDebug("SpaceShipComp.OnCollisionEnter2D - Shield = " + gameObject.name + " - " + collision.gameObject.name);
             ShieldComp shieldComp = collision.gameObject.GetComponent<ShieldComp>();
 
             /*
@@ -145,11 +144,12 @@ public class SpaceShipComp : MonoBehaviour {
         }
         else if (collision.gameObject.GetComponent<AsteroidComp>())
         {
-            ConfigComp.PrintDebug("SpaceShipComp.OnCollisionEnter2D - Asteroid = " + gameObject.name + " - " + collision.gameObject.name);
+           // ConfigComp.PrintDebug("SpaceShipComp.OnCollisionEnter2D - Asteroid = " + gameObject.name + " - " + collision.gameObject.name);
             numMaxHits--;
 
             levelControllerComp.Config.numTypeBonus--;
-            if( levelControllerComp.Config.numTypeBonus < 0 )
+            levelControllerComp.Config.numTypeShield--;
+            if ( levelControllerComp.Config.numTypeBonus < 0 )
                 levelControllerComp.Config.numTypeBonus = 0;
 
             if (numMaxHits < 0)
@@ -164,14 +164,10 @@ public class SpaceShipComp : MonoBehaviour {
                 AudioSource.PlayClipAtPoint(audioSource.clip, transform.position);
             return;
         }
-        //else
-        //{
-        //    ConfigComp.PrintDebug("SpaceShipComp.OnCollisionEnter2D ## " + gameObject.name + " - " + collision.gameObject.name);
-        //}
         
     }
 
-    private void loadShieldSpaceShip()
+    public void loadShieldSpaceShip()
     {
         numMaxHits = levelControllerComp.Config.numTypeShield;
         LoadSprite();
@@ -179,7 +175,7 @@ public class SpaceShipComp : MonoBehaviour {
 
     private void ExplosionEffect()
     {
-        ConfigComp.PrintDebug("SpaceShipComp.ExplosionEffect ");
+        //ConfigComp.PrintDebug("SpaceShipComp.ExplosionEffect ");
         if (explosion)
         {
             ParticleSystem ps = Instantiate<ParticleSystem>(explosion, transform.position, Quaternion.identity);
@@ -191,7 +187,7 @@ public class SpaceShipComp : MonoBehaviour {
 
     private void LoadSprite()
     {
-        ConfigComp.PrintDebug("SpaceShipComp.LoadSprite ");
+        //ConfigComp.PrintDebug("SpaceShipComp.LoadSprite ");
         int spriteIndex = numMaxHits;
         if (spriteIndex > sprites.Length || spriteIndex < 0)
             spriteIndex = 0;

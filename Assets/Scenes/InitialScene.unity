@@ -491,10 +491,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   soundtrack: 1
   soundeffects: 1
-  numAsteroidsDestroyed: 0
   numTypeShield: 0
   numTypeBonus: 0
-  numAsteroidsDestroyedPerBonus: 0
 --- !u!224 &488435440
 RectTransform:
   m_ObjectHideFlags: 0

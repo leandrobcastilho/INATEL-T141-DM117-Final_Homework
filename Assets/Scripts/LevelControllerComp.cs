@@ -77,6 +77,11 @@ public class LevelControllerComp : MonoBehaviour {
     [Range(10, 1000)]
     public int numAsteroidsPerBonus = 10;
 
+    [SerializeField]
+    [Tooltip("Number maximum of asteroids that can be lost")]
+    [Range(1, 1000)]
+    public int numMaxLostAsteroids = 0;
+
 
     [Header("keyboard Config")]
 
@@ -109,6 +114,18 @@ public class LevelControllerComp : MonoBehaviour {
         }
     }
 
+    private Text infoAsteroidsValue;
+    public Text InfoAsteroidsValue
+    {
+        get
+        {
+            if (!infoAsteroidsValue)
+                infoAsteroidsValue = GameObject.FindGameObjectWithTag("InfoAsteroidsValue").GetComponent<Text>();
+
+            return infoAsteroidsValue;
+        }
+    }
+
     private Text infoMaxAsteroidsValue;
     public Text InfoMaxAsteroidsValue
     {
@@ -121,15 +138,15 @@ public class LevelControllerComp : MonoBehaviour {
         }
     }
 
-    private Text infoAsteroidsValue;
-    public Text InfoAsteroidsValue
+    private Text infoMaxLostAsteroidsValue;
+    public Text InfoMaxLostAsteroidsValue
     {
         get
         {
-            if (!infoAsteroidsValue)
-                infoAsteroidsValue = GameObject.FindGameObjectWithTag("InfoAsteroidsValue").GetComponent<Text>();
+            if (!infoMaxLostAsteroidsValue)
+                infoMaxLostAsteroidsValue = GameObject.FindGameObjectWithTag("InfoMaxLostAsteroidsValue").GetComponent<Text>();
 
-            return infoAsteroidsValue;
+            return infoMaxLostAsteroidsValue;
         }
     }
 
@@ -168,6 +185,14 @@ public class LevelControllerComp : MonoBehaviour {
 
     public int numShieldsAdded = 0;
 
+    public int numMaxAsteroidPerLevel = 0;
+
+    public int countAsteroidsActives = 0;
+
+    public int numAsteroidsDestroyed = 0;
+
+    public int numAsteroidsDestroyedPerBonus = 0;
+
     private long timeReference;
 
     private List<GameObject> spots;
@@ -193,10 +218,14 @@ public class LevelControllerComp : MonoBehaviour {
         }
     }
 
-    private int numMaxAsteroidPerLevel = 0;
-
-    private MainControllerComp mainControllerComp;
-
+    private static bool gamePaused;
+    public bool GamePaused
+    {
+        get
+        {
+            return gamePaused;
+        }
+    }
 
     private ConfigComp configComp;
     public ConfigComp Config
@@ -210,7 +239,7 @@ public class LevelControllerComp : MonoBehaviour {
     // Use this for initialization
     void Start()
     {
-        ConfigComp.PrintDebug("LevelControllerComp.Start");
+        //ConfigComp.PrintDebug("LevelControllerComp.Start");
 
         configComp = FindObjectOfType<ConfigComp>();
 
@@ -220,23 +249,32 @@ public class LevelControllerComp : MonoBehaviour {
         infoLevelValue = GameObject.FindGameObjectWithTag("InfoLevelValue").GetComponent<Text>();
         infoAsteroidsValue = GameObject.FindGameObjectWithTag("InfoAsteroidsValue").GetComponent<Text>();
         infoMaxAsteroidsValue = GameObject.FindGameObjectWithTag("InfoMaxAsteroidsValue").GetComponent<Text>();
+        infoMaxLostAsteroidsValue = GameObject.FindGameObjectWithTag("InfoMaxLostAsteroidsValue").GetComponent<Text>();
         infoShieldValue = GameObject.FindGameObjectWithTag("InfoShieldValue").GetComponent<Text>();
         infoBonusValue = GameObject.FindGameObjectWithTag("InfoBonusValue").GetComponent<Text>();
-
-        
 
         Initialize();
 
         numMaxAsteroidPerLevel = numAsteroidsType1 + numAsteroidsType2 + numAsteroidsType3;
-
+        
         InfoMaxAsteroidsValue.text = numMaxAsteroidPerLevel.ToString();
+        InfoMaxLostAsteroidsValue.text = numMaxLostAsteroids.ToString();
         InfoLevelValue.text = SceneManager.GetActiveScene().buildIndex.ToString();
 
         UpdateValueAsteroids();
+        UpdateValueLostAsteroids();
         UpdateValueShield();
         UpdateValueBonus();
 
         ListSpots();
+
+        if (Config.IsShieldActivated())
+        {
+            if (Config.numTypeShield > 0)
+            {
+                spaceShipComp.loadShieldSpaceShip();
+            }
+        }
     }
 
     // Update is called once per frame
@@ -244,22 +282,25 @@ public class LevelControllerComp : MonoBehaviour {
 
         if (Input.GetMouseButton(0))
         {
-            //SpaceShip.SendLaserShot();
+            if (GameStarted && !GamePaused)
+                SpaceShip.SendLaserShot();
+
             if (!gameStarted)
             {
                 timeReference = DateTime.Now.ToFileTime();
                 GoText.gameObject.SetActive(false);
                 gameStarted = true;
-                ConfigComp.PrintDebug("LevelControllerComp.Update GameStarted " + GameStarted);
+                //ConfigComp.PrintDebug("LevelControllerComp.Update GameStarted " + GameStarted);
             }
         }
 
-        if (GameStarted && !Config.GamePaused)
+        if (GameStarted && !GamePaused)
         {
             UpdateValueAsteroids();
+            UpdateValueLostAsteroids();
             UpdateValueShield();
             UpdateValueBonus();
-            SpaceShip.SendLaserShot();
+            //SpaceShip.SendLaserShot();
             InserComponets();
         }
     }
@@ -288,10 +329,11 @@ public class LevelControllerComp : MonoBehaviour {
 
     void Initialize()
     {
-        ConfigComp.PrintDebug("LevelControllerComp.Initialize");
+        //ConfigComp.PrintDebug("LevelControllerComp.Initialize");
+        gamePaused = false;
         GoText.gameObject.SetActive(true);
-        Config.numAsteroidsDestroyed = 0;
-        Config.numAsteroidsDestroyedPerBonus = 0;
+        numAsteroidsDestroyed = 0;
+        numAsteroidsDestroyedPerBonus = 0;
         gameStarted = false;
         numAsteroidsType1Added = 0;
         numAsteroidsType2Added = 0;
@@ -314,14 +356,14 @@ public class LevelControllerComp : MonoBehaviour {
 
     public void LoadLevel(string sceneName)
     {
-        ConfigComp.PrintDebug("LevelControllerComp.LoadLevel " + sceneName);
+        //ConfigComp.PrintDebug("LevelControllerComp.LoadLevel " + sceneName);
         SceneManager.LoadScene(sceneName);
         Initialize();
     }
 
     public void LoadNextLevel()
     {
-        ConfigComp.PrintDebug("LevelControllerComp.LoadNextLevel "+ (SceneManager.GetActiveScene().buildIndex + 1));
+        //ConfigComp.PrintDebug("LevelControllerComp.LoadNextLevel "+ (SceneManager.GetActiveScene().buildIndex + 1));
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
         Initialize();
     }
@@ -348,10 +390,10 @@ public class LevelControllerComp : MonoBehaviour {
             numAsteroidsType3Added <= numAsteroidsType3)
         {
             int asteroidType = UnityEngine.Random.Range(1, 4);
-            ConfigComp.PrintDebug("LevelControllerComp.AddAsteroids numAsteroidsType1 " + numAsteroidsType1);
-            ConfigComp.PrintDebug("LevelControllerComp.AddAsteroids numAsteroidsType2 " + numAsteroidsType2);
-            ConfigComp.PrintDebug("LevelControllerComp.AddAsteroids numAsteroidsType3 " + numAsteroidsType3);
-            ConfigComp.PrintDebug("LevelControllerComp.AddAsteroids asteroidType " + asteroidType);
+            //ConfigComp.PrintDebug("LevelControllerComp.AddAsteroids numAsteroidsType1 " + numAsteroidsType1);
+            //ConfigComp.PrintDebug("LevelControllerComp.AddAsteroids numAsteroidsType2 " + numAsteroidsType2);
+            //ConfigComp.PrintDebug("LevelControllerComp.AddAsteroids numAsteroidsType3 " + numAsteroidsType3);
+            //ConfigComp.PrintDebug("LevelControllerComp.AddAsteroids asteroidType " + asteroidType);
             if (asteroidType == 1 && numAsteroidsType1Added <= numAsteroidsType1)
             {
                 numAsteroidsType1Added++;
@@ -373,7 +415,7 @@ public class LevelControllerComp : MonoBehaviour {
     private void AddAsterois(Transform[] asteroids)
     {
         int asteroidModel = UnityEngine.Random.Range(0, asteroids.Length);
-        ConfigComp.PrintDebug("LevelControllerComp.AddAsteroids asteroidModel " + asteroidModel);
+        //ConfigComp.PrintDebug("LevelControllerComp.AddAsteroids asteroidModel " + asteroidModel);
         var asteroid = asteroids[asteroidModel];
         if (spots.Count > 0)
         {
@@ -386,7 +428,12 @@ public class LevelControllerComp : MonoBehaviour {
 
     public void UpdateValueAsteroids()
     {
-        InfoAsteroidsValue.text = Config.numAsteroidsDestroyed.ToString();
+        InfoAsteroidsValue.text = numAsteroidsDestroyed.ToString();
+    }
+
+    public void UpdateValueLostAsteroids()
+    {
+        InfoMaxLostAsteroidsValue.text = numMaxLostAsteroids.ToString();
     }
 
     public void UpdateValueShield()
@@ -399,22 +446,30 @@ public class LevelControllerComp : MonoBehaviour {
         InfoBonusValue.text = Config.numTypeBonus.ToString();
     }
 
-    //public void IncreaseAsteroidCounter()
-    //{
-    //    countAsteroids++;
-    //}
+    public void IncreaseAsteroidActives()
+    {
+        countAsteroidsActives++;
+    }
 
     public void DecreaseAsteroidCounter()
     {
-        //countAsteroids--;
+        countAsteroidsActives--;
         numMaxAsteroidPerLevel--;
-        //if (numMaxAsteroidPerLevel <= 0 && countAsteroids <= 0)
-        if (numMaxAsteroidPerLevel <= 0)
+        if (numMaxAsteroidPerLevel <= 0 && countAsteroidsActives <= 0)
         {
             LoadNextLevel();
         }
     }
 
+    public void DecreaseNumMaxLostAsteroids()
+    {
+        numMaxLostAsteroids--;
+        if (numMaxLostAsteroids <= 0)
+        {
+            numMaxLostAsteroids = 0;
+            ResetGame();
+        }
+    }
 
     /// <summary>
     /// Method to pause the game
@@ -422,8 +477,8 @@ public class LevelControllerComp : MonoBehaviour {
     /// <param name="isPaused"></param>
     public void SetPauseMenu(bool isPaused)
     {
-        ConfigComp.PrintDebug("LevelControllerComp.SetPauseMenu "+ isPaused);
-        ConfigComp.PauseGame(isPaused);
+        //ConfigComp.PrintDebug("LevelControllerComp.SetPauseMenu "+ isPaused);
+        PauseGame(isPaused);
         pauseMenuPainel.SetActive(isPaused);
     }
 
@@ -434,10 +489,10 @@ public class LevelControllerComp : MonoBehaviour {
 
     public void ResetGame()
     {
-        ConfigComp.PrintDebug("LevelControllerComp.ResetGame ");
+        //ConfigComp.PrintDebug("LevelControllerComp.ResetGame ");
         gameOverMenuPainel.SetActive(true);
 
-        ConfigComp.PauseGame(true);
+        PauseGame(true);
         var buttons = gameOverMenuPainel.transform.GetComponentsInChildren<Button>();
 
         Button continueButton = null;
@@ -454,7 +509,7 @@ public class LevelControllerComp : MonoBehaviour {
         {
 #if UNITY_ADS
             //Se o button continue for clicado, iremos tocar o anúncio
-            StartCoroutine(Config.ShowContinue(continueButton));
+            StartCoroutine(ShowContinue(continueButton));
             //buttonContinue.onClick.AddListener(UnityAdControler.ShowRewardAd);
 #else
             //Se nao existe add, nao precisa mostrar o botao Continue
@@ -464,27 +519,15 @@ public class LevelControllerComp : MonoBehaviour {
 
     }
 
-    public void Restart()
-    {
-        ConfigComp.PrintDebug("LevelControllerComp.Restart ");
-        Config.Restart();
-    }
-
-    public void LoadSceneByName(string nameScene)
-    {
-        ConfigComp.PrintDebug("LevelControllerComp.LoadSceneByName ");
-        Config.LoadSceneByName(nameScene);
-    }
-
     /// <summary>
     /// Metodo para reiniciar o jogo
     /// </summary>
     private void Reset()
     {
-        ConfigComp.PrintDebug("LevelControllerComp.Reset ");
+        //ConfigComp.PrintDebug("LevelControllerComp.Reset ");
         Initialize();
         //Reinicia o level
-        Config.LoadSceneByName(SceneManager.GetActiveScene().name);
+        LoadSceneByName(SceneManager.GetActiveScene().name);
     }
 
 
@@ -493,24 +536,79 @@ public class LevelControllerComp : MonoBehaviour {
     /// </summary>
     public void Continue()
     {
-        ConfigComp.PrintDebug("LevelControllerComp.Continue ");
+        //ConfigComp.PrintDebug("LevelControllerComp.Continue ");
         gameOverMenuPainel.SetActive(false);
 
-        ConfigComp.PauseGame(false);
+        PauseGame(false);
     }
 
 
     public void IncreaseAsteroidsDestroyed()
     {
-        Config.numAsteroidsDestroyed++;
-        Config.numAsteroidsDestroyedPerBonus++;
-        if(Config.numAsteroidsDestroyedPerBonus >= numAsteroidsPerBonus)
+        numAsteroidsDestroyed++;
+        numAsteroidsDestroyedPerBonus++;
+        if(numAsteroidsDestroyedPerBonus >= numAsteroidsPerBonus)
         {
             int maxBonus = spaceShipComp.laserShots.Length - 1;
-            Config.numAsteroidsDestroyedPerBonus = 0;
+            numAsteroidsDestroyedPerBonus = 0;
             Config.numTypeBonus++;
             if (Config.numTypeBonus > maxBonus)
                 Config.numTypeBonus = maxBonus;
+        }
+    }
+
+    public static void PauseGame(bool isPaused)
+    {
+        //ConfigComp.PrintDebug("LevelControllerComp.PauseGame " + isPaused);
+        gamePaused = isPaused;
+        //Se o jogo estiver paused, timescale recebe 0
+        Time.timeScale = (isPaused) ? 0 : 1;
+    }
+
+    public void Restart()
+    {
+        //ConfigComp.PrintDebug("ConfigComp.Restart ");
+        PauseGame(false);
+        Initialize();
+        Config.initValues();
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
+
+    public void LoadSceneByName(string nameScene)
+    {
+        //ConfigComp.PrintDebug("ConfigComp.LoadSceneByName ");
+        PauseGame(false);
+        SceneManager.LoadScene(nameScene);
+    }
+
+    public void DestroyObj(GameObject gameObject)
+    {
+        Destroy(gameObject);
+    }
+
+    public IEnumerator ShowContinue(Button continueButton)
+    {
+        // ConfigComp.PrintDebug("ConfigComp.ShowContinue ");
+        var btnText = continueButton.GetComponentInChildren<Text>();
+        while (true)
+        {
+            if (UnityAdControler.nextTimeReward.HasValue && (DateTime.Now < UnityAdControler.nextTimeReward.Value))
+            {
+                continueButton.interactable = false;
+
+                TimeSpan restante = UnityAdControler.nextTimeReward.Value - DateTime.Now;
+
+                var contagemRegressiva = string.Format("{0:D2}:{1:D2}", restante.Minutes, restante.Seconds);
+                btnText.text = contagemRegressiva;
+                yield return new WaitForSeconds(1f);
+            }
+            else
+            {
+                continueButton.interactable = true;
+                continueButton.onClick.AddListener(UnityAdControler.ShowRewardAd);
+                btnText.text = "Continue (Ver Ad)";
+                break;
+            }
         }
     }
 

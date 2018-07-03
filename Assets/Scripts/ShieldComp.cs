@@ -22,7 +22,7 @@ public class ShieldComp : MonoBehaviour {
     void Start()
     {
         levelControllerComp = FindObjectOfType<LevelControllerComp>();
-        ConfigComp.PrintDebug("ShieldComp.Start ");
+        //ConfigComp.PrintDebug("ShieldComp.Start ");
         numShot = 0;
         spriteRenderer = GetComponent<SpriteRenderer>();
         audioSource = GetComponent<AudioSource>();
