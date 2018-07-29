@@ -26,11 +26,9 @@ public class SpaceShipComp : MonoBehaviour {
 
     private SpriteRenderer spriteRenderer;
 
-    private Rigidbody2D rb;
-
     private int numMaxHits;
-
-    private long timeReference;
+    
+	private bool isKeyBoard = false;
 
     // Use this for initialization
     void Start()
@@ -39,17 +37,27 @@ public class SpaceShipComp : MonoBehaviour {
         //ConfigComp.PrintDebug("SpaceShipComp.Start ");
 
         numMaxHits = 0;
-        timeReference = DateTime.Now.ToFileTime();
 
         spriteRenderer = GetComponent<SpriteRenderer>();
         audioSource = GetComponent<AudioSource>();
-        rb = GetComponent<Rigidbody2D>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        MouseMovement();
+		 if (Input.GetKeyDown(KeyCode.Space)) {
+            isKeyBoard = true;
+           
+        }else if (Input.GetButtonDown("Fire1")) {
+            isKeyBoard = false;
+        }
+
+        if (isKeyBoard) {
+            KeyboardMovement();
+        }else
+            MouseMovement();
+		
+        //MouseMovement();
         //TouchMovement();
         //KeyboardMovement();
     }
@@ -58,26 +66,20 @@ public class SpaceShipComp : MonoBehaviour {
     {
         if (levelControllerComp.GameStarted && !levelControllerComp.GamePaused)
         {
-            DateTime dataTime = DateTime.Now;
-            long currentTimeNow = dataTime.ToFileTime();
-            long timeDifference = (currentTimeNow - timeReference);
-            long interval = (long)(intevalTimeSeconds * 5000000);
-            if (timeDifference >= interval)
+            if (Input.GetButtonDown("Fire1") || (Input.GetKeyDown(KeyCode.Space)))
             {
-                timeReference = currentTimeNow;
                 GameObject laserShot = laserShots[levelControllerComp.Config.numTypeBonus];
                 SendLaserShot(laserShot);
             }
         }
     }
-
+	
     private void SendLaserShot(GameObject laserShot)
     {
-        Vector3 goposition = this.gameObject.transform.position;
-        goposition.y = 3;
-        GameObject newLaserShot = Instantiate(laserShot, goposition, Quaternion.identity);
-        LaserShotComp laserShotComp = newLaserShot.GetComponent<LaserShotComp>();
-        laserShotComp.StarShot();
+		Vector3 goposition = this.gameObject.transform.position;
+		GameObject newLaserShot = Instantiate(laserShot, goposition, Quaternion.identity);
+		LaserShotComp laserShotComp = newLaserShot.GetComponent<LaserShotComp>();
+		laserShotComp.StarShot();
     }
 
     private void MouseMovement()
@@ -102,11 +104,13 @@ public class SpaceShipComp : MonoBehaviour {
     }
 
     private void KeyboardMovement()
-    {
-        //ConfigComp.PrintDebug("SpaceShipComp.KeyboardMovement ");
-        var horizontalStimulus = Input.GetAxis("Horizontal");
-        float resultLateralSpeed = horizontalStimulus * levelControllerComp.lateralSpeed;
-        rb.AddForce(new Vector2(resultLateralSpeed, 0));
+    {		
+		float eixoX = Input.GetAxis("Horizontal");
+        
+
+        Vector2 direcao = new Vector2(eixoX, 0);
+
+        transform.Translate(direcao * 10 * Time.deltaTime);
     }
 
     private void OnCollisionEnter2D(Collision2D collision)

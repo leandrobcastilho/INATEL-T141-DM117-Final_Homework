@@ -282,9 +282,6 @@ public class LevelControllerComp : MonoBehaviour {
 
         if (Input.GetMouseButton(0))
         {
-            if (GameStarted && !GamePaused)
-                SpaceShip.SendLaserShot();
-
             if (!gameStarted)
             {
                 timeReference = DateTime.Now.ToFileTime();
@@ -293,7 +290,7 @@ public class LevelControllerComp : MonoBehaviour {
                 //ConfigComp.PrintDebug("LevelControllerComp.Update GameStarted " + GameStarted);
             }
         }
-
+       
         if (GameStarted && !GamePaused)
         {
             UpdateValueAsteroids();
@@ -302,6 +299,15 @@ public class LevelControllerComp : MonoBehaviour {
             UpdateValueBonus();
             //SpaceShip.SendLaserShot();
             InserComponets();
+            Config.playSoundByScene();
+        }
+    }
+
+    void FixedUpdate()
+    {
+        if (GameStarted && !GamePaused)
+        {
+            SpaceShip.SendLaserShot();
         }
     }
 
@@ -493,6 +499,9 @@ public class LevelControllerComp : MonoBehaviour {
         gameOverMenuPainel.SetActive(true);
 
         PauseGame(true);
+
+        Config.playSoundByGameOver();
+
         var buttons = gameOverMenuPainel.transform.GetComponentsInChildren<Button>();
 
         Button continueButton = null;
@@ -527,7 +536,8 @@ public class LevelControllerComp : MonoBehaviour {
         //ConfigComp.PrintDebug("LevelControllerComp.Reset ");
         Initialize();
         //Reinicia o level
-        LoadSceneByName(SceneManager.GetActiveScene().name);
+        string sceneName = SceneManager.GetActiveScene().name;
+        LoadSceneByName(sceneName);
     }
 
 
@@ -540,6 +550,8 @@ public class LevelControllerComp : MonoBehaviour {
         gameOverMenuPainel.SetActive(false);
 
         PauseGame(false);
+
+        Config.playSoundByScene();
     }
 
 
@@ -574,11 +586,11 @@ public class LevelControllerComp : MonoBehaviour {
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
-    public void LoadSceneByName(string nameScene)
+    public void LoadSceneByName(string sceneName)
     {
         //ConfigComp.PrintDebug("ConfigComp.LoadSceneByName ");
         PauseGame(false);
-        SceneManager.LoadScene(nameScene);
+        SceneManager.LoadScene(sceneName);
     }
 
     public void DestroyObj(GameObject gameObject)
@@ -588,19 +600,20 @@ public class LevelControllerComp : MonoBehaviour {
 
     public IEnumerator ShowContinue(Button continueButton)
     {
-        // ConfigComp.PrintDebug("ConfigComp.ShowContinue ");
+        ConfigComp.PrintDebug("ConfigComp.ShowContinue ");
         var btnText = continueButton.GetComponentInChildren<Text>();
         while (true)
         {
             if (UnityAdControler.nextTimeReward.HasValue && (DateTime.Now < UnityAdControler.nextTimeReward.Value))
             {
                 continueButton.interactable = false;
+                
 
                 TimeSpan restante = UnityAdControler.nextTimeReward.Value - DateTime.Now;
 
                 var contagemRegressiva = string.Format("{0:D2}:{1:D2}", restante.Minutes, restante.Seconds);
                 btnText.text = contagemRegressiva;
-                yield return new WaitForSeconds(1f);
+                yield return new WaitForSecondsRealtime(1f);
             }
             else
             {

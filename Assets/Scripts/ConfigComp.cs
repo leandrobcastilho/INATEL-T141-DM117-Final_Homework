@@ -31,6 +31,20 @@ public class ConfigComp : MonoBehaviour {
         }
     }
 
+    [Header("GameObjects References")]
+
+    [SerializeField]
+    [Tooltip("Levels AudioClip Reference")]
+    public AudioClip[] levelAudioClip;
+
+    [SerializeField]
+    [Tooltip("GameOver AudioClip Reference")]
+    public AudioClip gameOverAudioClip;
+
+    private AudioSource audioSource;
+
+    private int currentIndexAudioSource;
+
     [Header("Current game info:")]
 
     private bool shieldActivated = false;
@@ -55,8 +69,6 @@ public class ConfigComp : MonoBehaviour {
 
     public static bool activedDebug = true;
 
-    private AudioSource audioSource;
-
     public static ConfigComp configComp = null;
 
     private void Awake()
@@ -76,9 +88,11 @@ public class ConfigComp : MonoBehaviour {
     void Start()
     {
         audioSource = GetComponent<AudioSource>();
-
+        currentIndexAudioSource = -1;
         if (Soundtrack)
-            audioSource.Play();
+        {
+            playSoundByScene();
+        }
 
         initValues();
     }
@@ -94,6 +108,51 @@ public class ConfigComp : MonoBehaviour {
             audioSource.Stop();
         else if (!audioSource.isPlaying && Soundtrack)
             audioSource.Play();
+    }
+
+    public void playSoundByScene()
+    {
+        int indexScene = SceneManager.GetActiveScene().buildIndex;
+        playSoundByScene(indexScene);
+    }
+
+    public void playSoundByScene(int indexScene)
+    {
+        ConfigComp.PrintDebug("ConfigComp.playSoundByScene [in]");
+
+        ConfigComp.PrintDebug("ConfigComp.playSoundByScene - currentIndexAudioSource " + currentIndexAudioSource);
+        ConfigComp.PrintDebug("ConfigComp.playSoundByScene - indexScene " + indexScene);
+        if (currentIndexAudioSource != indexScene)
+        {
+            currentIndexAudioSource = indexScene;
+            if ( audioSource.isPlaying )
+            {
+                ConfigComp.PrintDebug("ConfigComp.playSoundByScene - audioSource.Stop() ");
+                audioSource.Stop();
+            }
+            audioSource.clip = levelAudioClip[indexScene];
+            ConfigComp.PrintDebug("ConfigComp.playSoundByScene - audioSource.name " + audioSource.name);
+            ConfigComp.PrintDebug("ConfigComp.playSoundByScene - audioSource.Play() ");
+            audioSource.Play();
+
+        }
+        ConfigComp.PrintDebug("ConfigComp.playSoundByScene [out]");
+    }
+
+    public void playSoundByGameOver()
+    {
+        if (audioSource.isPlaying)
+        {
+            audioSource.Stop();
+        }
+        currentIndexAudioSource = -1;
+        audioSource.clip = gameOverAudioClip;
+        audioSource.Play();
+    }
+
+    public void playSoundContinue()
+    {
+        playSoundByScene();
     }
 
     public static void PrintDebug(string msg)

@@ -5,20 +5,23 @@ using UnityEngine.SceneManagement;
 
 public class MainControllerComp : MonoBehaviour {
 
-    public void LoadSceneByNameWithAds(string nameScene)
+    private ConfigComp configComp;
+
+    public void LoadSceneByNameWithAds(string sceneName)
     {
 
-        SceneManager.LoadScene(nameScene);
+        SceneManager.LoadScene(sceneName);
 
         if (UnityAdControler.showAds)
         {
             UnityAdControler.ShowAd();
         }
+        
     }
 
     // Use this for initialization
     void Start () {
-       
+        configComp = FindObjectOfType<ConfigComp>();
     }
 	
 	// Update is called once per frame
