@@ -28,6 +28,8 @@ public class SpaceShipComp : MonoBehaviour {
 
     private int numMaxHits;
 
+    private bool isKeyBoard = false;
+
     // Use this for initialization
     void Start()
     {
@@ -43,9 +45,25 @@ public class SpaceShipComp : MonoBehaviour {
     // Update is called once per frame
     void Update()
     {
-        MouseMovement();
-        TouchMovement();
-        KeyboardMovement();
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            isKeyBoard = true;
+
+        }
+        else if (Input.GetButtonDown("Fire1"))
+        {
+            isKeyBoard = false;
+        }
+
+        if (isKeyBoard)
+        {
+            KeyboardMovement();
+        }
+        else
+        {
+            MouseMovement();
+            TouchMovement();
+        }
     }
 
     public void SendLaserShot()
@@ -92,11 +110,23 @@ public class SpaceShipComp : MonoBehaviour {
     private void KeyboardMovement()
     {		
 		float eixoX = Input.GetAxis("Horizontal");
-        
+        float valueX = eixoX * 10 * Time.deltaTime;
+        if(valueX!=0)
+        ConfigComp.PrintDebug("SpaceShipComp.KeyboardMovement - valueX = " + valueX + " - " + Mathf.Clamp(valueX, 0f, 15f));
+        Vector2 direcao = new Vector2(valueX, 0);
+        transform.Translate(direcao);
+        if (transform.position.x < 1)
+        {
+            Vector2 spaceShipPos = new Vector2(1, transform.position.y);
+            transform.position = spaceShipPos;
+        }
 
-        Vector2 direcao = new Vector2(eixoX, 0);
+        if (transform.position.x > 15)
+        {
+            Vector2 spaceShipPos = new Vector2(15, transform.position.y);
+            transform.position = spaceShipPos;
+        }
 
-        transform.Translate(direcao * 10 * Time.deltaTime);
     }
 
     private void OnCollisionEnter2D(Collision2D collision)

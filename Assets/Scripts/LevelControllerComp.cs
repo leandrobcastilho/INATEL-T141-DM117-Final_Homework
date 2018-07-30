@@ -375,7 +375,7 @@ public class LevelControllerComp : MonoBehaviour {
     public void OnOffSountrack()
     {
         configComp.soundtrack = !configComp.soundtrack;
-        changeTextSountrack();
+        changeTextSoundtrack();
     }
 
     public void OnOffSoundeffects()
@@ -384,17 +384,17 @@ public class LevelControllerComp : MonoBehaviour {
         changeTextSoundEffects();
     }
 
-    private void changeTextSountrack()
+    private void changeTextSoundtrack()
     {
-        //ConfigComp.PrintDebug("LevelControllerComp.changeTextSountrack configComp.Soundtrack " + configComp.soundtrack);
+        //ConfigComp.PrintDebug("LevelControllerComp.changeTextSoundtrack configComp.Soundtrack " + configComp.soundtrack);
         if (configComp.soundtrack)
         {
-            //ConfigComp.PrintDebug("LevelControllerComp.changeTextSountrack Soundtrack ON ");
+            //ConfigComp.PrintDebug("LevelControllerComp.changeTextSoundtrack Soundtrack ON ");
             SoundtrackText.text = "Soundtrack ON";
         }
         else
         {
-            //ConfigComp.PrintDebug("LevelControllerComp.changeTextSountrack Soundtrack OFF ");
+            //ConfigComp.PrintDebug("LevelControllerComp.changeTextSoundtrack Soundtrack OFF ");
             SoundtrackText.text = "Soundtrack OFF";
         }
     }
@@ -552,6 +552,8 @@ public class LevelControllerComp : MonoBehaviour {
         //ConfigComp.PrintDebug("LevelControllerComp.SetPauseMenu "+ isPaused);
         PauseGame(isPaused);
         pauseMenuPainel.SetActive(isPaused);
+        changeTextSoundtrack();
+        changeTextSoundEffects();
     }
 
 
