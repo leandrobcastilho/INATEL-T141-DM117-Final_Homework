@@ -62,7 +62,7 @@ public class AsteroidComp : MonoBehaviour {
                 */
                 for (int i = 1; i <= power; i++)
                 {
-                    if (levelControllerComp.Config.Soundeffects)
+                    if (levelControllerComp.Config.soundEffects)
                         AudioSource.PlayClipAtPoint(audioSource.clip, transform.position);
                     ExplosionEffect();
                     if (!ApplyDamages())
@@ -75,7 +75,7 @@ public class AsteroidComp : MonoBehaviour {
         {
             if (transform.CompareTag("Type3") || transform.CompareTag("Type2") || transform.CompareTag("Type1"))
             {
-                if (levelControllerComp.Config.Soundeffects)
+                if (levelControllerComp.Config.soundEffects)
                     AudioSource.PlayClipAtPoint(audioSource.clip, transform.position);
                 ExplosionEffect();
                 ApplyDamages();

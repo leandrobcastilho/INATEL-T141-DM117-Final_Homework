@@ -21,6 +21,10 @@ TagManager:
   - InfoLevelValue
   - InfoMaxAsteroidsValue
   - InfoMaxLostAsteroidsValue
+  - SoundtrackImage
+  - SoundEffectsImage
+  - SoundtrackText
+  - SoundEffectsText
   layers:
   - Default
   - TransparentFX

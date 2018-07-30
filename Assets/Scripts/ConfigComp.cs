@@ -11,25 +11,11 @@ public class ConfigComp : MonoBehaviour {
 
     [SerializeField]
     [Tooltip("Soundtrack On/Off")]
-    private bool soundtrack = true;
-    public bool Soundtrack
-    {
-        get
-        {
-            return soundtrack;
-        }
-    }
+    public bool soundtrack = true;
 
     [SerializeField]
     [Tooltip("Sound effects On/Off")]
-    private bool soundeffects = true;
-    public bool Soundeffects
-    {
-        get
-        {
-            return soundeffects;
-        }
-    }
+    public bool soundEffects = true;
 
     [Header("GameObjects References")]
 
@@ -44,6 +30,7 @@ public class ConfigComp : MonoBehaviour {
     private AudioSource audioSource;
 
     private int currentIndexAudioSource;
+    private bool currentSoundtrackConfig;
 
     [Header("Current game info:")]
 
@@ -89,7 +76,10 @@ public class ConfigComp : MonoBehaviour {
     {
         audioSource = GetComponent<AudioSource>();
         currentIndexAudioSource = -1;
-        if (Soundtrack)
+        //ConfigComp.PrintDebug("ConfigComp.Start soundtrack " + soundtrack);
+        //ConfigComp.PrintDebug("ConfigComp.Start soundEffects " + soundEffects);
+        currentSoundtrackConfig = soundtrack;
+        if (soundtrack)
         {
             playSoundByScene();
         }
@@ -104,9 +94,9 @@ public class ConfigComp : MonoBehaviour {
     }
     // Update is called once per frame
     void Update () {
-        if (audioSource.isPlaying && !Soundtrack)
+        if (audioSource.isPlaying && !soundtrack)
             audioSource.Stop();
-        else if (!audioSource.isPlaying && Soundtrack)
+        else if (!audioSource.isPlaying && soundtrack)
             audioSource.Play();
     }
 
@@ -118,25 +108,26 @@ public class ConfigComp : MonoBehaviour {
 
     public void playSoundByScene(int indexScene)
     {
-        ConfigComp.PrintDebug("ConfigComp.playSoundByScene [in]");
+        //ConfigComp.PrintDebug("ConfigComp.playSoundByScene [in]");
 
-        ConfigComp.PrintDebug("ConfigComp.playSoundByScene - currentIndexAudioSource " + currentIndexAudioSource);
-        ConfigComp.PrintDebug("ConfigComp.playSoundByScene - indexScene " + indexScene);
-        if (currentIndexAudioSource != indexScene)
+        //ConfigComp.PrintDebug("ConfigComp.playSoundByScene - currentIndexAudioSource " + currentIndexAudioSource);
+        //ConfigComp.PrintDebug("ConfigComp.playSoundByScene - indexScene " + indexScene);
+        if (currentIndexAudioSource != indexScene || currentSoundtrackConfig != configComp.soundtrack)
         {
             currentIndexAudioSource = indexScene;
             if ( audioSource.isPlaying )
             {
-                ConfigComp.PrintDebug("ConfigComp.playSoundByScene - audioSource.Stop() ");
+                //ConfigComp.PrintDebug("ConfigComp.playSoundByScene - audioSource.Stop() ");
                 audioSource.Stop();
             }
             audioSource.clip = levelAudioClip[indexScene];
-            ConfigComp.PrintDebug("ConfigComp.playSoundByScene - audioSource.name " + audioSource.name);
-            ConfigComp.PrintDebug("ConfigComp.playSoundByScene - audioSource.Play() ");
+            //ConfigComp.PrintDebug("ConfigComp.playSoundByScene - audioSource.name " + audioSource.name);
+            //ConfigComp.PrintDebug("ConfigComp.playSoundByScene - audioSource.Play() ");
+            if(soundtrack)
             audioSource.Play();
 
         }
-        ConfigComp.PrintDebug("ConfigComp.playSoundByScene [out]");
+        //ConfigComp.PrintDebug("ConfigComp.playSoundByScene [out]");
     }
 
     public void playSoundByGameOver()

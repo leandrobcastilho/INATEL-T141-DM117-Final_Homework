@@ -38,7 +38,7 @@ public class ShieldComp : MonoBehaviour {
     {
         if (collision.gameObject.GetComponent<LaserShotComp>())
         {
-            if (levelControllerComp.Config.Soundeffects)
+            if (levelControllerComp.Config.soundEffects)
                 AudioSource.PlayClipAtPoint(audioSource.clip, transform.position);
             ExplosionEffect();
             ApplyDamages();

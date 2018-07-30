@@ -27,8 +27,6 @@ public class SpaceShipComp : MonoBehaviour {
     private SpriteRenderer spriteRenderer;
 
     private int numMaxHits;
-    
-	private bool isKeyBoard = false;
 
     // Use this for initialization
     void Start()
@@ -45,21 +43,9 @@ public class SpaceShipComp : MonoBehaviour {
     // Update is called once per frame
     void Update()
     {
-		 if (Input.GetKeyDown(KeyCode.Space)) {
-            isKeyBoard = true;
-           
-        }else if (Input.GetButtonDown("Fire1")) {
-            isKeyBoard = false;
-        }
-
-        if (isKeyBoard) {
-            KeyboardMovement();
-        }else
-            MouseMovement();
-		
-        //MouseMovement();
-        //TouchMovement();
-        //KeyboardMovement();
+        MouseMovement();
+        TouchMovement();
+        KeyboardMovement();
     }
 
     public void SendLaserShot()
@@ -164,7 +150,7 @@ public class SpaceShipComp : MonoBehaviour {
                 levelControllerComp.ResetGame();
             }
             LoadSprite();
-            if (levelControllerComp.Config.Soundeffects)
+            if (levelControllerComp.Config.soundEffects)
                 AudioSource.PlayClipAtPoint(audioSource.clip, transform.position);
             return;
         }

@@ -174,6 +174,30 @@ public class LevelControllerComp : MonoBehaviour {
         }
     }
 
+    private Text soundtrackText;
+    public Text SoundtrackText
+    {
+        get
+        {
+            if (!soundtrackText)
+                soundtrackText = GameObject.FindGameObjectWithTag("SoundtrackText").GetComponent<Text>();
+
+            return soundtrackText;
+        }
+    }
+
+
+    private Text soundEffectsText;
+    public Text SoundEffectsText
+    {
+        get
+        {
+            if (!soundEffectsText)
+                soundEffectsText = GameObject.FindGameObjectWithTag("SoundEffectsText").GetComponent<Text>();
+
+            return soundEffectsText;
+        }
+    }
     [Header("Current game info:")]
 
     
@@ -346,6 +370,48 @@ public class LevelControllerComp : MonoBehaviour {
         numAsteroidsType3Added = 0;
         numShieldsAdded = 0;
         timeReference = DateTime.Now.ToFileTime();
+    }
+
+    public void OnOffSountrack()
+    {
+        configComp.soundtrack = !configComp.soundtrack;
+        changeTextSountrack();
+    }
+
+    public void OnOffSoundeffects()
+    {
+        configComp.soundEffects = !configComp.soundEffects;
+        changeTextSoundEffects();
+    }
+
+    private void changeTextSountrack()
+    {
+        //ConfigComp.PrintDebug("LevelControllerComp.changeTextSountrack configComp.Soundtrack " + configComp.soundtrack);
+        if (configComp.soundtrack)
+        {
+            //ConfigComp.PrintDebug("LevelControllerComp.changeTextSountrack Soundtrack ON ");
+            SoundtrackText.text = "Soundtrack ON";
+        }
+        else
+        {
+            //ConfigComp.PrintDebug("LevelControllerComp.changeTextSountrack Soundtrack OFF ");
+            SoundtrackText.text = "Soundtrack OFF";
+        }
+    }
+
+    private void changeTextSoundEffects()
+    {
+        //ConfigComp.PrintDebug("LevelControllerComp.changeTextSoundEffects configComp.Soundeffects " + configComp.soundEffects);
+        if (configComp.soundEffects)
+        {
+            //ConfigComp.PrintDebug("LevelControllerComp.changeTextSoundEffects Sound Effects ON ");
+            SoundEffectsText.text = "Sound Effects ON";
+        }
+        else
+        {
+            //ConfigComp.PrintDebug("LevelControllerComp.changeTextSoundEffects Sound Effects OFF ");
+            SoundEffectsText.text = "Sound Effects OFF";
+        }
     }
 
     private void ListSpots()

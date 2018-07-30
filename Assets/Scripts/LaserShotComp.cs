@@ -32,7 +32,7 @@ public class LaserShotComp : MonoBehaviour {
         spaceShip = FindObjectOfType<SpaceShipComp>();
         transform.position = spaceShip.transform.position;
 
-        if (levelControllerComp.Config.Soundeffects)
+        if (levelControllerComp.Config.soundEffects)
         {
             AudioSource.PlayClipAtPoint(audioSource.clip, transform.position);
         }
