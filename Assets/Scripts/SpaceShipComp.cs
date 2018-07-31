@@ -30,6 +30,8 @@ public class SpaceShipComp : MonoBehaviour {
 
     private bool isKeyBoard = false;
 
+    private float playerLaserShotAction = -1f;
+
     // Use this for initialization
     void Start()
     {
@@ -63,6 +65,23 @@ public class SpaceShipComp : MonoBehaviour {
         {
             MouseMovement();
             TouchMovement();
+        }
+
+        if (levelControllerComp.GameStarted && !levelControllerComp.GamePaused)
+        {
+            playerLaserShotAction = Time.time + 0.5f;
+        }
+    }
+
+    void FixedUpdate()
+    {
+        if (levelControllerComp.GameStarted && !levelControllerComp.GamePaused)
+        {
+            if (Time.time < playerLaserShotAction)
+            {//Para para nao perder input de pulo
+                playerLaserShotAction = -1f;
+                SendLaserShot();
+            }
         }
     }
 

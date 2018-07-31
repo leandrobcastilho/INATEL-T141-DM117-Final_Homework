@@ -327,14 +327,6 @@ public class LevelControllerComp : MonoBehaviour {
         }
     }
 
-    void FixedUpdate()
-    {
-        if (GameStarted && !GamePaused)
-        {
-            SpaceShip.SendLaserShot();
-        }
-    }
-
     private void InserComponets()
     {
         DateTime dataTime = DateTime.Now;
