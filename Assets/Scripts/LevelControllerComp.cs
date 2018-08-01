@@ -304,7 +304,7 @@ public class LevelControllerComp : MonoBehaviour {
     // Update is called once per frame
     void Update () {
 
-        if (Input.GetMouseButton(0))
+        if (Input.GetMouseButton(0) || Input.GetKeyDown(KeyCode.Space))
         {
             if (!gameStarted)
             {
@@ -492,22 +492,22 @@ public class LevelControllerComp : MonoBehaviour {
 
     public void UpdateValueAsteroids()
     {
-        InfoAsteroidsValue.text = numAsteroidsDestroyed.ToString();
+        InfoAsteroidsValue.text = numAsteroidsDestroyed < 0 ? "0" : numAsteroidsDestroyed.ToString();
     }
 
     public void UpdateValueLostAsteroids()
     {
-        InfoMaxLostAsteroidsValue.text = numMaxLostAsteroids.ToString();
+        InfoMaxLostAsteroidsValue.text = numMaxLostAsteroids < 0 ? "0" : numMaxLostAsteroids.ToString();
     }
 
     public void UpdateValueShield()
     {
-        InfoShieldValue.text = Config.numTypeShield.ToString();
+        InfoShieldValue.text = Config.numTypeShield < 0 ? "0": Config.numTypeShield.ToString();
     }
 
     public void UpdateValueBonus()
     {
-        InfoBonusValue.text = Config.numTypeBonus.ToString();
+        InfoBonusValue.text = Config.numTypeBonus < 0 ? "0" : Config.numTypeBonus.ToString();
     }
 
     public void IncreaseAsteroidActives()

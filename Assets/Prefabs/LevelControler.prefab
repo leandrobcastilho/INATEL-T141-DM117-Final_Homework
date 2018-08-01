@@ -8,15 +8,15 @@ Prefab:
     m_TransformParent: {fileID: 0}
     m_Modifications: []
     m_RemovedComponents: []
-  m_ParentPrefab: {fileID: 0}
+  m_SourcePrefab: {fileID: 0}
   m_RootGameObject: {fileID: 1312681826879860}
-  m_IsPrefabParent: 1
+  m_IsPrefabAsset: 1
 --- !u!1 &1312681826879860
 GameObject:
   m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  serializedVersion: 5
+  serializedVersion: 6
   m_Component:
   - component: {fileID: 4831785756298954}
   - component: {fileID: 114444159455154740}
@@ -30,7 +30,7 @@ GameObject:
 --- !u!4 &4831785756298954
 Transform:
   m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1312681826879860}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
@@ -43,7 +43,7 @@ Transform:
 --- !u!114 &114444159455154740
 MonoBehaviour:
   m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1312681826879860}
   m_Enabled: 1
@@ -65,18 +65,22 @@ MonoBehaviour:
   - {fileID: 4644794456036990, guid: 02a8660d91ce72c4fa613bc5a2100015, type: 2}
   - {fileID: 4415276015747880, guid: ffbc50e1178a743499f3f97ebb699f34, type: 2}
   shield: {fileID: 4450190353114668, guid: d8ac689ad1cbfca4b82ccc06dba5020a, type: 2}
-  spaceShip: {fileID: 1162172433202322, guid: a630c789a19d51f4c8fbc7b049b82ad3, type: 2}
+  pauseMenuPainel: {fileID: 0}
+  gameOverMenuPainel: {fileID: 0}
+  infoPanel: {fileID: 0}
   intevalTimeSeconds: 3
   numAsteroidsType1: 1
   numAsteroidsType2: 2
   numAsteroidsType3: 3
   numShields: 3
   numAsteroidsPerBonus: 10
+  numMaxLostAsteroids: 2
   lateralSpeed: 5
-  pauseMenuPainel: {fileID: 0}
-  gameOverMenuPainel: {fileID: 0}
-  infoPanel: {fileID: 0}
-  numAsteroids: 0
-  numShield: 0
-  numBonus: 0
+  numAsteroidsType1Added: 0
+  numAsteroidsType2Added: 0
+  numAsteroidsType3Added: 0
+  numShieldsAdded: 0
+  numMaxAsteroidPerLevel: 0
+  countAsteroidsActives: 0
+  numAsteroidsDestroyed: 0
   numAsteroidsDestroyedPerBonus: 0

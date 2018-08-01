@@ -91,9 +91,11 @@ public class MainControllerComp : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 
+        configComp.playSoundByScene();
         if (Input.GetKeyDown(KeyCode.Space))
         {
             LoadSceneByNameWithAds("Level_1");
         }
+
     }
 }

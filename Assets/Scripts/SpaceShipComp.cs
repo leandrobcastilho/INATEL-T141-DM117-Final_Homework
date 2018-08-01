@@ -188,6 +188,8 @@ public class SpaceShipComp : MonoBehaviour {
 
             levelControllerComp.Config.numTypeBonus--;
             levelControllerComp.Config.numTypeShield--;
+            if (levelControllerComp.Config.numTypeShield < 0)
+                levelControllerComp.Config.numTypeShield = 0;
             if ( levelControllerComp.Config.numTypeBonus < 0 )
                 levelControllerComp.Config.numTypeBonus = 0;
 
