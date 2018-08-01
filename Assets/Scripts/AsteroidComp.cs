@@ -95,6 +95,14 @@ public class AsteroidComp : MonoBehaviour {
             levelControllerComp.Config.numTypeBonus--;
             if (levelControllerComp.Config.numTypeBonus < 0)
                 levelControllerComp.Config.numTypeBonus = 0;
+
+            if (transform.CompareTag("Type3") )
+                levelControllerComp.numAsteroidsType3Added--;
+            else if (transform.CompareTag("Type2"))
+                levelControllerComp.numAsteroidsType2Added--;
+            else if (transform.CompareTag("Type1"))
+                levelControllerComp.numAsteroidsType1Added--;
+            
             Destroy(gameObject);
         }
     }
