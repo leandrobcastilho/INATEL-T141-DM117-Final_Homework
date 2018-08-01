@@ -65,15 +65,19 @@ MonoBehaviour:
   - {fileID: 4644794456036990, guid: 02a8660d91ce72c4fa613bc5a2100015, type: 2}
   - {fileID: 4415276015747880, guid: ffbc50e1178a743499f3f97ebb699f34, type: 2}
   shield: {fileID: 4450190353114668, guid: d8ac689ad1cbfca4b82ccc06dba5020a, type: 2}
-  pauseMenuPainel: {fileID: 0}
-  gameOverMenuPainel: {fileID: 0}
-  infoPanel: {fileID: 0}
-  intevalTimeSeconds: 3
+  pauseMenuPainel: {fileID: 1422530402313218, guid: 8b60e4787e2032c4d85a7a7f3bd48299,
+    type: 2}
+  gameOverMenuPainel: {fileID: 1547693598571978, guid: 8b60e4787e2032c4d85a7a7f3bd48299,
+    type: 2}
+  infoPanel: {fileID: 1783719023193460, guid: 8b60e4787e2032c4d85a7a7f3bd48299, type: 2}
+  intevalTimeMilliseconds: 1000
   numAsteroidsType1: 1
   numAsteroidsType2: 2
   numAsteroidsType3: 3
   numShields: 3
-  numAsteroidsPerBonus: 10
+  numAsteroidsPerBonus1: 6
+  numAsteroidsPerBonus2: 12
+  numAsteroidsPerBonus3: 18
   numMaxLostAsteroids: 2
   lateralSpeed: 5
   numAsteroidsType1Added: 0
@@ -81,6 +85,5 @@ MonoBehaviour:
   numAsteroidsType3Added: 0
   numShieldsAdded: 0
   numMaxAsteroidPerLevel: 0
-  countAsteroidsActives: 0
   numAsteroidsDestroyed: 0
   numAsteroidsDestroyedPerBonus: 0

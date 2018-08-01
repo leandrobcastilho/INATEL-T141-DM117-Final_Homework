@@ -81,7 +81,9 @@ public class MainControllerComp : MonoBehaviour {
     void Start () {
         configComp = FindObjectOfType<ConfigComp>();
 
+        if(GameObject.FindGameObjectWithTag("SoundtrackImage"))
         soundtrack = GameObject.FindGameObjectWithTag("SoundtrackImage").GetComponent<Image>();
+        if(GameObject.FindGameObjectWithTag("SoundEffectsImage"))
         soundEffects = GameObject.FindGameObjectWithTag("SoundEffectsImage").GetComponent<Image>();
 
         changeImageSountrack();

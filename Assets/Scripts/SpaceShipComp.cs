@@ -15,11 +15,6 @@ public class SpaceShipComp : MonoBehaviour {
     [Tooltip("Environment Laser Shot")]
     public GameObject[] laserShots;
 
-    [SerializeField]
-    [Tooltip("Inteval time between Laser Shot")]
-    [Range(0, 1)]
-    public float intevalTimeSeconds = 0.1f;
-
     private AudioSource audioSource;
 
     private LevelControllerComp levelControllerComp;
@@ -187,11 +182,11 @@ public class SpaceShipComp : MonoBehaviour {
             numMaxHits--;
 
             levelControllerComp.Config.numTypeBonus--;
+            if ( levelControllerComp.Config.numTypeBonus < 0 )
+                levelControllerComp.Config.numTypeBonus = 0;
             levelControllerComp.Config.numTypeShield--;
             if (levelControllerComp.Config.numTypeShield < 0)
                 levelControllerComp.Config.numTypeShield = 0;
-            if ( levelControllerComp.Config.numTypeBonus < 0 )
-                levelControllerComp.Config.numTypeBonus = 0;
 
             if (numMaxHits < 0)
             {

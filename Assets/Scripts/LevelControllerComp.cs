@@ -48,8 +48,8 @@ public class LevelControllerComp : MonoBehaviour {
 
     [SerializeField]
     [Tooltip("Inteval time between asteroids")]
-    [Range(1, 100)]
-    public long intevalTimeSeconds = 10;
+    [Range(100, 5000)]
+    public long intevalTimeMilliseconds = 1000;
 
     [SerializeField]
     [Tooltip("Number of asteroids type1 per Level")]
@@ -73,9 +73,19 @@ public class LevelControllerComp : MonoBehaviour {
 
 
     [SerializeField]
-    [Tooltip("Number of asteroids to win the bonus")]
-    [Range(10, 1000)]
-    public int numAsteroidsPerBonus = 10;
+    [Tooltip("Number of asteroids to win the bonus 1")]
+    [Range(1, 1000)]
+    public int numAsteroidsPerBonus1 = 6;
+
+    [SerializeField]
+    [Tooltip("Number of asteroids to win the bonus 2")]
+    [Range(1, 1000)]
+    public int numAsteroidsPerBonus2 = 12;
+
+    [SerializeField]
+    [Tooltip("Number of asteroids to win the bonus 3")]
+    [Range(1, 1000)]
+    public int numAsteroidsPerBonus3 = 18;
 
     [SerializeField]
     [Tooltip("Number maximum of asteroids that can be lost")]
@@ -175,29 +185,29 @@ public class LevelControllerComp : MonoBehaviour {
     }
 
     private Text soundtrackText;
-    public Text SoundtrackText
-    {
-        get
-        {
-            if (!soundtrackText)
-                soundtrackText = GameObject.FindGameObjectWithTag("SoundtrackText").GetComponent<Text>();
+    //public Text SoundtrackText
+    //{
+    //    get
+    //    {
+    //        if (!soundtrackText)
+    //            soundtrackText = GameObject.FindGameObjectWithTag("SoundtrackText").GetComponent<Text>();
 
-            return soundtrackText;
-        }
-    }
+    //        return soundtrackText;
+    //    }
+    //}
 
 
     private Text soundEffectsText;
-    public Text SoundEffectsText
-    {
-        get
-        {
-            if (!soundEffectsText)
-                soundEffectsText = GameObject.FindGameObjectWithTag("SoundEffectsText").GetComponent<Text>();
+    //public Text SoundEffectsText
+    //{
+    //    get
+    //    {
+    //        if (!soundEffectsText)
+    //            soundEffectsText = GameObject.FindGameObjectWithTag("SoundEffectsText").GetComponent<Text>();
 
-            return soundEffectsText;
-        }
-    }
+    //        return soundEffectsText;
+    //    }
+    //}
     [Header("Current game info:")]
 
     
@@ -210,8 +220,6 @@ public class LevelControllerComp : MonoBehaviour {
     public int numShieldsAdded = 0;
 
     public int numMaxAsteroidPerLevel = 0;
-
-    public int countAsteroidsActives = 0;
 
     public int numAsteroidsDestroyed = 0;
 
@@ -256,6 +264,8 @@ public class LevelControllerComp : MonoBehaviour {
     {
         get
         {
+            if(configComp==null)
+                configComp = FindObjectOfType<ConfigComp>();
             return configComp;
         }
     }
@@ -279,10 +289,12 @@ public class LevelControllerComp : MonoBehaviour {
 
         Initialize();
 
-        numMaxAsteroidPerLevel = numAsteroidsType1 + numAsteroidsType2 + numAsteroidsType3;
         
-        InfoMaxAsteroidsValue.text = numMaxAsteroidPerLevel.ToString();
+        numMaxAsteroidPerLevel = (numAsteroidsType1 + numAsteroidsType2 + numAsteroidsType3);
+        InfoMaxAsteroidsValue.text = numMaxAsteroidPerLevel < 0 ? "0" : numMaxAsteroidPerLevel.ToString();
+
         InfoMaxLostAsteroidsValue.text = numMaxLostAsteroids.ToString();
+
         InfoLevelValue.text = SceneManager.GetActiveScene().buildIndex.ToString();
 
         UpdateValueAsteroids();
@@ -332,7 +344,7 @@ public class LevelControllerComp : MonoBehaviour {
         DateTime dataTime = DateTime.Now;
         long currentTimeNow = dataTime.ToFileTime();
         long timeDifference = (currentTimeNow - timeReference);
-        long interval = (intevalTimeSeconds * 10000000);
+        long interval = (intevalTimeMilliseconds * 10000);
         if (timeDifference >= interval)
         {
             timeReference = currentTimeNow;
@@ -366,43 +378,43 @@ public class LevelControllerComp : MonoBehaviour {
 
     public void OnOffSountrack()
     {
-        configComp.soundtrack = !configComp.soundtrack;
+        Config.soundtrack = !Config.soundtrack;
         changeTextSoundtrack();
     }
 
     public void OnOffSoundeffects()
     {
-        configComp.soundEffects = !configComp.soundEffects;
+        Config.soundEffects = !Config.soundEffects;
         changeTextSoundEffects();
     }
 
     private void changeTextSoundtrack()
     {
-        //ConfigComp.PrintDebug("LevelControllerComp.changeTextSoundtrack configComp.Soundtrack " + configComp.soundtrack);
-        if (configComp.soundtrack)
+        //ConfigComp.PrintDebug("LevelControllerComp.changeTextSoundtrack Config.Soundtrack " + Config.soundtrack);
+        if (Config.soundtrack)
         {
             //ConfigComp.PrintDebug("LevelControllerComp.changeTextSoundtrack Soundtrack ON ");
-            SoundtrackText.text = "Soundtrack ON";
+            soundtrackText.text = "Soundtrack ON";
         }
         else
         {
             //ConfigComp.PrintDebug("LevelControllerComp.changeTextSoundtrack Soundtrack OFF ");
-            SoundtrackText.text = "Soundtrack OFF";
+            soundtrackText.text = "Soundtrack OFF";
         }
     }
 
     private void changeTextSoundEffects()
     {
-        //ConfigComp.PrintDebug("LevelControllerComp.changeTextSoundEffects configComp.Soundeffects " + configComp.soundEffects);
-        if (configComp.soundEffects)
+        //ConfigComp.PrintDebug("LevelControllerComp.changeTextSoundEffects Config.Soundeffects " + Config.soundEffects);
+        if (Config.soundEffects)
         {
             //ConfigComp.PrintDebug("LevelControllerComp.changeTextSoundEffects Sound Effects ON ");
-            SoundEffectsText.text = "Sound Effects ON";
+            soundEffectsText.text = "Sound Effects ON";
         }
         else
         {
             //ConfigComp.PrintDebug("LevelControllerComp.changeTextSoundEffects Sound Effects OFF ");
-            SoundEffectsText.text = "Sound Effects OFF";
+            soundEffectsText.text = "Sound Effects OFF";
         }
     }
 
@@ -510,16 +522,10 @@ public class LevelControllerComp : MonoBehaviour {
         InfoBonusValue.text = Config.numTypeBonus < 0 ? "0" : Config.numTypeBonus.ToString();
     }
 
-    public void IncreaseAsteroidActives()
-    {
-        countAsteroidsActives++;
-    }
-
     public void DecreaseAsteroidCounter()
     {
-        countAsteroidsActives--;
         numMaxAsteroidPerLevel--;
-        if (numMaxAsteroidPerLevel <= 0 && countAsteroidsActives <= 0)
+        if (numMaxAsteroidPerLevel <= 0 )
         {
             LoadNextLevel();
         }
@@ -528,6 +534,7 @@ public class LevelControllerComp : MonoBehaviour {
     public void DecreaseNumMaxLostAsteroids()
     {
         numMaxLostAsteroids--;
+
         if (numMaxLostAsteroids <= 0)
         {
             numMaxLostAsteroids = 0;
@@ -544,6 +551,24 @@ public class LevelControllerComp : MonoBehaviour {
         //ConfigComp.PrintDebug("LevelControllerComp.SetPauseMenu "+ isPaused);
         PauseGame(isPaused);
         pauseMenuPainel.SetActive(isPaused);
+
+        var texts = pauseMenuPainel.transform.GetComponentsInChildren<Text>();
+
+        soundtrackText = null;
+        soundEffectsText = null;
+        foreach (var text in texts)
+        {
+            if (text.tag.Equals("SoundtrackText"))
+            {
+                //ConfigComp.PrintDebug("LevelControllerComp.SetPauseMenu SoundtrackText ");
+                soundtrackText = text;
+            }else
+            if (text.tag.Equals("SoundEffectsText"))
+            {
+                //ConfigComp.PrintDebug("LevelControllerComp.SetPauseMenu SoundEffectsText ");
+                soundEffectsText = text;
+            }
+        }
         changeTextSoundtrack();
         changeTextSoundEffects();
     }
@@ -555,8 +580,29 @@ public class LevelControllerComp : MonoBehaviour {
 
     public void ResetGame()
     {
-        //ConfigComp.PrintDebug("LevelControllerComp.ResetGame ");
+        ConfigComp.PrintDebug("LevelControllerComp.ResetGame ");
         gameOverMenuPainel.SetActive(true);
+
+        var texts = gameOverMenuPainel.transform.GetComponentsInChildren<Text>();
+
+        soundtrackText = null;
+        soundEffectsText = null;
+        foreach (var text in texts)
+        {
+            if (text.tag.Equals("SoundtrackText"))
+            {
+                ConfigComp.PrintDebug("LevelControllerComp.ResetGame SoundtrackText ");
+                soundtrackText = text;
+            }
+            else
+            if (text.tag.Equals("SoundEffectsText"))
+            {
+                ConfigComp.PrintDebug("LevelControllerComp.ResetGame SoundEffectsText ");
+                soundEffectsText = text;
+            }
+        }
+        changeTextSoundtrack();
+        changeTextSoundEffects();
 
         PauseGame(true);
 
@@ -619,7 +665,9 @@ public class LevelControllerComp : MonoBehaviour {
     {
         numAsteroidsDestroyed++;
         numAsteroidsDestroyedPerBonus++;
-        if(numAsteroidsDestroyedPerBonus >= numAsteroidsPerBonus)
+        if ((Config.numTypeBonus == 0 && numAsteroidsDestroyedPerBonus >= numAsteroidsPerBonus1) ||
+            (Config.numTypeBonus == 1 && numAsteroidsDestroyedPerBonus >= numAsteroidsPerBonus2) ||
+            (Config.numTypeBonus == 2 && numAsteroidsDestroyedPerBonus >= numAsteroidsPerBonus3))
         {
             int maxBonus = spaceShipComp.laserShots.Length - 1;
             numAsteroidsDestroyedPerBonus = 0;
@@ -639,7 +687,7 @@ public class LevelControllerComp : MonoBehaviour {
 
     public void Restart()
     {
-        //ConfigComp.PrintDebug("ConfigComp.Restart ");
+        //ConfigComp.PrintDebug("LevelControllerComp.Restart ");
         PauseGame(false);
         Initialize();
         Config.initValues();
@@ -648,7 +696,7 @@ public class LevelControllerComp : MonoBehaviour {
 
     public void LoadSceneByName(string sceneName)
     {
-        //ConfigComp.PrintDebug("ConfigComp.LoadSceneByName ");
+        //ConfigComp.PrintDebug("LevelControllerComp.LoadSceneByName ");
         PauseGame(false);
         SceneManager.LoadScene(sceneName);
     }
@@ -660,7 +708,7 @@ public class LevelControllerComp : MonoBehaviour {
 
     public IEnumerator ShowContinue(Button continueButton)
     {
-        ConfigComp.PrintDebug("ConfigComp.ShowContinue ");
+        //ConfigComp.PrintDebug("LevelControllerComp.ShowContinue ");
         var btnText = continueButton.GetComponentInChildren<Text>();
         while (true)
         {

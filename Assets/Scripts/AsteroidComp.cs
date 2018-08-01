@@ -26,10 +26,6 @@ public class AsteroidComp : MonoBehaviour {
         numShot = 0;
         spriteRenderer = GetComponent<SpriteRenderer>();
         audioSource = GetComponent<AudioSource>();
-        if (transform.CompareTag("Type3") || transform.CompareTag("Type2") || transform.CompareTag("Type1"))
-        {
-            levelControllerComp.IncreaseAsteroidActives();
-        }
     }
 
     // Update is called once per frame
@@ -94,9 +90,11 @@ public class AsteroidComp : MonoBehaviour {
         if (collision.gameObject.GetComponent<GameOverComp>())
         {
             //ConfigComp.PrintDebug("AsteroidComp.OnTriggerEnter2D - GameOver = " + gameObject.name + " - " + collision.gameObject.name);
-            levelControllerComp.DecreaseAsteroidCounter();
             levelControllerComp.DecreaseNumMaxLostAsteroids();
             levelControllerComp.UpdateValueLostAsteroids();
+            levelControllerComp.Config.numTypeBonus--;
+            if (levelControllerComp.Config.numTypeBonus < 0)
+                levelControllerComp.Config.numTypeBonus = 0;
             Destroy(gameObject);
         }
     }
